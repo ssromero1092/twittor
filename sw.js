@@ -48,25 +48,21 @@ self.addEventListener('install', e => {
 
 
 self.addEventListener('activate', e => {
-
-    const respuesta = caches.keys().then( keys => {
-
-        keys.forEach( key => {
-
-            if (  key !== STATIC_CACHE && key.includes('static') ) {
+    const respuesta = caches.keys().then(keys => {
+        const cacheDeletions = keys.map(key => {
+            if (key !== STATIC_CACHE && key.includes('static')) {
                 return caches.delete(key);
             }
 
-            if (  key !== DYNAMIC_CACHE && key.includes('dynamic') ) {
+            if (key !== DYNAMIC_CACHE && key.includes('dynamic')) {
                 return caches.delete(key);
             }
-
         });
 
+        return Promise.all(cacheDeletions);
     });
 
-    e.waitUntil( respuesta );
-
+    e.waitUntil(respuesta);
 });
 
 
